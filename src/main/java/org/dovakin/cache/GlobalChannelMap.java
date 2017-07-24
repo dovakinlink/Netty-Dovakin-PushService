@@ -27,19 +27,19 @@ public class GlobalChannelMap {
     }
 
     public static void remove(String id){
-        //TODO 同时需要移除group的对应channel
+        group.remove(channelMap.get(id));
         channelMap.remove(id);
     }
 
-    public static void remove(ChannelId id){
+    public static void remove(ChannelId channelId){
         for(Map.Entry entry : channelMap.entrySet()){
-            if(entry.getValue() == id){
+            if(entry.getValue() == channelId){
                 String key = (String) entry.getKey();
                 channelMap.remove(key);
             }
         }
         //TODO 不了解是否为正确用法
-        group.remove(id);
+        group.remove(channelId);
     }
 
     public static void pushAll(NGLSProtocol msg){
