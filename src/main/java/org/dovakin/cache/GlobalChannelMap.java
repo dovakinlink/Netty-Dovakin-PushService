@@ -42,7 +42,15 @@ public class GlobalChannelMap {
         group.remove(channelId);
     }
 
-    public static void pushAll(NGLSProtocol msg){
+    public static void push(String id, NGLSProtocol msg){
+        ChannelId channelId = channelMap.get(id);
+        Channel ch;
+        if((ch = group.find(channelId)) != null){
+            ch.writeAndFlush(msg);
+        }
+    }
+
+    public static void push(NGLSProtocol msg){
         group.writeAndFlush(msg);
     }
 }

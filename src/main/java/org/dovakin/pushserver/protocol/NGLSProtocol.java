@@ -14,6 +14,9 @@ public class NGLSProtocol {
      */
     private final static int HEAD = 0x29;
 
+
+    private int ACTION_TYPE;
+
     /**
      * 协议正文长度
      */
@@ -31,6 +34,14 @@ public class NGLSProtocol {
 
     public static int getHEAD() {
         return HEAD;
+    }
+
+    public int getTYPE() {
+        return this.ACTION_TYPE;
+    }
+
+    public void setTYPE(int TYPE) {
+        this.ACTION_TYPE = TYPE;
     }
 
     public int getContent_length() {

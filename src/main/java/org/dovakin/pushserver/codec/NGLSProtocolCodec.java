@@ -32,6 +32,8 @@ public class NGLSProtocolCodec extends ByteToMessageCodec<NGLSProtocol> {
 
         // 填充包头
         byteBuf.writeInt(nglsProtocol.getHEAD());
+        // 填充ACTION类型
+        byteBuf.writeInt(nglsProtocol.getTYPE());
         // 填充消息长度
         byteBuf.writeInt(nglsProtocol.getContent_length());
         // 填充消息体
@@ -52,44 +54,39 @@ public class NGLSProtocolCodec extends ByteToMessageCodec<NGLSProtocol> {
         if(byteBuf.readableBytes() < MIN_LENGTH) return;
         // 报文长度过长,判别为非法socket数据,丢弃
         if(byteBuf.readableBytes() > MAX_LENGTH) byteBuf.skipBytes(byteBuf.readableBytes());
-
         // 原始游标位置
         int index;
-
         // 开始读取协议包头
         while (true){
             index = byteBuf.readerIndex();
             byteBuf.markReaderIndex();
-
             // 成功解析协议包头
             if(byteBuf.readInt() == NGLSProtocol.getHEAD()){
                 break;
             }
-
             // 过滤非协议数据
             byteBuf.resetReaderIndex();
             byteBuf.readByte();
-
             // 粘包处理
             if(byteBuf.readableBytes() < MIN_LENGTH){
                 return;
             }
         }
-
-
+        //解析协议ACTION类型
+        int action = byteBuf.readInt();
         int length = byteBuf.readInt();
         // 粘包处理
         if(byteBuf.readableBytes() < length){
             byteBuf.readerIndex(index);
             return;
         }
-
         // 消息体读取
         byte[] content = new byte[length];
         byteBuf.readBytes(content);
 
         // 反序列化协议数据
         NGLSProtocol nglsProtocol = new NGLSProtocol(content.length, content);
+        nglsProtocol.setTYPE(action);
         list.add(nglsProtocol);
     }
 }

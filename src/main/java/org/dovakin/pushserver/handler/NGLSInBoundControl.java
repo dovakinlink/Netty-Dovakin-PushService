@@ -1,8 +1,12 @@
 package org.dovakin.pushserver.handler;
 
+import com.google.gson.Gson;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.CharsetUtil;
 import org.dovakin.cache.GlobalChannelMap;
+import org.dovakin.event.EventType;
+import org.dovakin.pushserver.bean.AuthAction;
 import org.dovakin.pushserver.protocol.NGLSProtocol;
 
 /**
@@ -15,13 +19,26 @@ public class NGLSInBoundControl extends SimpleChannelInboundHandler<NGLSProtocol
     protected void channelRead0(ChannelHandlerContext ctx, NGLSProtocol nglsProtocolCodec)
             throws Exception {
         //TODO 协议数据处理
+        int action = nglsProtocolCodec.getTYPE();
+        switch (action){
+            case EventType.PUSH:
+                break;
+            case EventType.AUTH:
+                Gson gson = new Gson();
+                AuthAction authAction
+                        = gson.fromJson
+                        (new String(nglsProtocolCodec.getContent(), CharsetUtil.UTF_8),
+                                AuthAction.class);
+                GlobalChannelMap.put(authAction.getClientId(), ctx.channel());
+                System.out.println("NGLS通道建立[ClientID]: " + authAction.getClientId() + "\n");
+                break;
+        }
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        //TEST
-        GlobalChannelMap.put("111",ctx.channel());
-        System.out.println("链接建立... \n");
+        System.out.println("SOCKET连接建立... \n");
+        System.out.println("等待鉴权... \n");
     }
 
     @Override

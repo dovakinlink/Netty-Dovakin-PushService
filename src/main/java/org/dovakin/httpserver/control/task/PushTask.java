@@ -3,6 +3,7 @@ package org.dovakin.httpserver.control.task;
 import io.netty.channel.ChannelHandlerContext;
 import org.dovakin.cache.GlobalChannelMap;
 import org.dovakin.event.Event;
+import org.dovakin.event.EventType;
 import org.dovakin.httpserver.control.HttpTask;
 import org.dovakin.pushserver.protocol.NGLSProtocol;
 
@@ -17,16 +18,15 @@ public class PushTask extends HttpTask{
     }
 
     public String onInvoke() {
-        //TODO 根据content中的推送id,推送到不同的socket中
-        //TEST
-
+        //TODO 处理Event的Message数据,返回结果字符串
         return getEvent().getContent().getContent().toString();
     }
 
-    protected String onFinish(String result) {
+    protected String onFinish(ChannelHandlerContext ctx, String clientId,  String result) {
 
         NGLSProtocol nglsProtocol = new NGLSProtocol(result.length(), result.getBytes());
-        GlobalChannelMap.pushAll(nglsProtocol);
+        nglsProtocol.setTYPE(EventType.PUSH);
+        GlobalChannelMap.push(clientId, nglsProtocol);
         return result;
     }
 }

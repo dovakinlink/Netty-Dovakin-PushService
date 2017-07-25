@@ -33,7 +33,7 @@ public abstract class HttpTask {
 
     public void onSuccess(String msg){
 
-        String responseContent = onFinish(msg);
+        String responseContent = onFinish(ctx, event.getContent().getClientId(), msg);
         ChannelFuture future
                 = ctx.writeAndFlush(
                         makeResponse(HttpResponseStatus.OK,responseContent));
@@ -41,7 +41,7 @@ public abstract class HttpTask {
     }
 
     public void onFailed(String msg){
-        String responseContent = onFinish(msg);
+        String responseContent = onFinish(ctx, event.getContent().getClientId(), msg);
         ChannelFuture future
                 = ctx.writeAndFlush(
                         makeResponse(HttpResponseStatus.OK,responseContent));
@@ -49,7 +49,7 @@ public abstract class HttpTask {
     }
 
     protected abstract String onInvoke();
-    protected abstract String onFinish(String obj);
+    protected abstract String onFinish(ChannelHandlerContext ctx, String clientId, String obj);
 
     /**
      * 构造HTTP RESPONSE
