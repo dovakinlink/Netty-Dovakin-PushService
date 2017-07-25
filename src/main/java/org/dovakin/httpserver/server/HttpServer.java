@@ -27,6 +27,8 @@ public class HttpServer implements DovakinServer {
                     .childHandler(new HttpHandlerInitializer())
                     .option(ChannelOption.SO_BACKLOG, 512)
                     .childOption(ChannelOption.SO_KEEPALIVE,true);
+
+            System.out.println("HTTP服务已启动...");
             ChannelFuture future = b.bind(new InetSocketAddress(port)).channel().closeFuture();
             future.sync();
         } catch (Exception e){

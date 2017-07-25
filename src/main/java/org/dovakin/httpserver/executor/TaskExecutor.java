@@ -4,6 +4,8 @@ import com.google.common.collect.Queues;
 import com.google.common.util.concurrent.*;
 import org.dovakin.httpserver.control.HttpTask;
 
+import javax.annotation.Nullable;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 
@@ -12,18 +14,31 @@ import java.util.concurrent.Executors;
  */
 public class TaskExecutor {
 
-    ListeningExecutorService executorService = MoreExecutors.listeningDecorator(
+    private static final ListeningExecutorService executorService = MoreExecutors.listeningDecorator(
             Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
 
+    // 延迟执行队列
     final ConcurrentLinkedQueue<HttpTask> queue = Queues.newConcurrentLinkedQueue();
 
-    //TODO
-    public void dosth(){
+    public static void submit(final HttpTask task){
+        Futures.addCallback(executorService.submit(new Callable<String>() {
 
-    }
+            public String call() throws Exception {
+                //TODO 处理实际业务逻辑
+                //TEST
+                return task.run();
+            }
+        }), new FutureCallback<String>() {
 
-    //TODO 线程池进行队列管理(FIFO),执行Task
-    public static void joinQueue(HttpTask task){
+            public void onSuccess(@Nullable String s) {
+                task.onSuccess(s);
+            }
+
+            public void onFailure(Throwable throwable) {
+                task.onFailed(throwable.getMessage());
+            }
+        });
+
         task.run();
     }
 }

@@ -6,22 +6,24 @@ package org.dovakin.message.bean;
  */
 public class AuthContent {
 
-    private String title;
-    private String content;
+    // 用户名
+    private String userId;
+    // 密码
+    private String password;
 
-    public String getTitle() {
-        return title;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getContent() {
-        return content;
+    public String getPassword() {
+        return password;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

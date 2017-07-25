@@ -7,6 +7,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
+import org.dovakin.event.Event;
 
 /**
  * Created by liuhuanchao on 2017/7/24.
@@ -15,24 +16,54 @@ public abstract class HttpTask {
 
     private final ChannelHandlerContext ctx;
 
-    public HttpTask(ChannelHandlerContext ctx){
+    private final Event event;
+
+    public HttpTask(ChannelHandlerContext ctx, Event event){
         this.ctx = ctx;
+        this.event = event;
     }
 
-    public void run(){
-        begin();
-        //TODO 完善response及返回数据
-        String responseContent = "{\"test\":\"test\"}";
+    public String run(){
+       return onInvoke();
+    }
+
+    public Event getEvent(){
+        return this.event;
+    }
+
+    public void onSuccess(String msg){
+
+        String responseContent = onFinish(msg);
+        ChannelFuture future
+                = ctx.writeAndFlush(
+                        makeResponse(HttpResponseStatus.OK,responseContent));
+        future.addListener(ChannelFutureListener.CLOSE);
+    }
+
+    public void onFailed(String msg){
+        String responseContent = onFinish(msg);
+        ChannelFuture future
+                = ctx.writeAndFlush(
+                        makeResponse(HttpResponseStatus.OK,responseContent));
+        future.addListener(ChannelFutureListener.CLOSE);
+    }
+
+    protected abstract String onInvoke();
+    protected abstract String onFinish(String obj);
+
+    /**
+     * 构造HTTP RESPONSE
+     * @param responseContent
+     * @return
+     */
+    private FullHttpResponse makeResponse(HttpResponseStatus status,String responseContent){
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
-                HttpResponseStatus.OK,
+                status,
                 Unpooled.wrappedBuffer(responseContent.getBytes(CharsetUtil.UTF_8)));
 
         //response.headers().set()
         response.headers().set("Cotent-type","application/json;charset=UTF-8");
         response.headers().set("Content-length", response.content().readableBytes());
-        ChannelFuture future = ctx.writeAndFlush(response);
-        future.addListener(ChannelFutureListener.CLOSE);
+        return response;
     }
-
-    protected abstract void begin();
 }
