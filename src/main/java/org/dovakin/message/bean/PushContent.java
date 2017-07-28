@@ -40,7 +40,7 @@ public class PushContent {
     public String toString(){
         return  "{" +
                 "\"notifyCount\":" + notifyCount + ","
-                + "\"pushTitle\":" + pushTitle + ","
-                + "\"pushMessage\":" + pushMessage + "}";
+                + "\"pushTitle\":\"" + pushTitle + "\","
+                + "\"pushMessage\":\"" + pushMessage + "\"}";
     }
 }

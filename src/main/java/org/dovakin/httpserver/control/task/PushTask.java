@@ -1,20 +1,28 @@
 package org.dovakin.httpserver.control.task;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.CharsetUtil;
+import org.dovakin.annotations.RequestTask;
 import org.dovakin.cache.GlobalChannelMap;
 import org.dovakin.event.Event;
 import org.dovakin.event.EventType;
+import org.dovakin.httpserver.bean.PushRequest;
 import org.dovakin.httpserver.control.HttpTask;
+import org.dovakin.message.PushMessage;
 import org.dovakin.pushserver.protocol.NGLSProtocol;
 
 /**
  * Created by liuhuanchao on 2017/7/24.
  */
+@RequestTask(uri = "/push")
 public class PushTask extends HttpTask{
 
 
-    public PushTask(ChannelHandlerContext ctx, Event event){
-        super(ctx, event);
+    public PushTask(ChannelHandlerContext ctx, ByteBuf buf){
+        super(ctx, buf);
     }
 
     public String onInvoke() {
@@ -28,5 +36,17 @@ public class PushTask extends HttpTask{
         nglsProtocol.setTYPE(EventType.PUSH);
         GlobalChannelMap.push(clientId, nglsProtocol);
         return result;
+    }
+
+    protected Event getEvent(ByteBuf buf) {
+        String content = buf.toString(CharsetUtil.UTF_8);
+        JsonParser parser = new JsonParser();
+        Gson gson = new Gson();
+
+        PushRequest request = gson.fromJson(content, PushRequest.class);
+        Event<PushMessage> event = new Event();
+        event.setType(request.getEventType());
+        event.setContent(request.getMessage());
+        return event;
     }
 }

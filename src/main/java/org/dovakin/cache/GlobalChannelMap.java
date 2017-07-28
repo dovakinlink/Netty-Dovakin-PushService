@@ -44,6 +44,10 @@ public class GlobalChannelMap {
 
     public static void push(String id, NGLSProtocol msg){
         ChannelId channelId = channelMap.get(id);
+        if(channelId == null){
+            //TODO 推送对象不在线处理逻辑
+            return;
+        }
         Channel ch;
         if((ch = group.find(channelId)) != null){
             ch.writeAndFlush(msg);

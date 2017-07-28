@@ -1,5 +1,8 @@
 package org.dovakin.httpserver.control;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -8,6 +11,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import org.dovakin.event.Event;
+import org.dovakin.httpserver.bean.PushRequest;
+import org.dovakin.message.PushMessage;
 
 /**
  * Created by liuhuanchao on 2017/7/24.
@@ -18,9 +23,10 @@ public abstract class HttpTask {
 
     private final Event event;
 
-    public HttpTask(ChannelHandlerContext ctx, Event event){
+    public HttpTask(ChannelHandlerContext ctx, ByteBuf buf){
         this.ctx = ctx;
-        this.event = event;
+        this.event = getEvent(buf);
+
     }
 
     public String run(){
@@ -50,6 +56,7 @@ public abstract class HttpTask {
 
     protected abstract String onInvoke();
     protected abstract String onFinish(ChannelHandlerContext ctx, String clientId, String obj);
+    protected abstract Event getEvent(ByteBuf buf);
 
     /**
      * 构造HTTP RESPONSE

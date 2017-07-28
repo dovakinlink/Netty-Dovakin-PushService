@@ -31,6 +31,10 @@ public class NGLSInBoundControl extends SimpleChannelInboundHandler<NGLSProtocol
                                 AuthAction.class);
                 GlobalChannelMap.put(authAction.getClientId(), ctx.channel());
                 System.out.println("NGLS通道建立[ClientID]: " + authAction.getClientId() + "\n");
+                byte[] result = "o".getBytes();
+                NGLSProtocol nglsProtocol = new NGLSProtocol(result.length, result);
+                nglsProtocol.setTYPE(EventType.AUTH_SUCCESS);
+                ctx.writeAndFlush(nglsProtocol);
                 break;
         }
     }
