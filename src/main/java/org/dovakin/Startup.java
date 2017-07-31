@@ -1,8 +1,9 @@
 package org.dovakin;
 
-import org.dovakin.annotations.AnnotationDispatcher;
-import org.dovakin.httpserver.server.HttpServer;
-import org.dovakin.pushserver.server.NGLSServer;
+import org.dovakin.push.core.ServerBinder;
+import org.dovakin.push.core.annotations.AnnotationDispatcher;
+import org.dovakin.push.core.httpserver.server.HttpServer;
+import org.dovakin.push.core.pushserver.server.NGLSServer;
 
 /**
  * Created by liuhuanchao on 2017/7/24.
