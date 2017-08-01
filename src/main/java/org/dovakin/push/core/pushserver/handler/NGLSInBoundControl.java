@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.CharsetUtil;
+import org.dovakin.push.core.annotations.AnnotationDispatcher;
 import org.dovakin.push.core.cache.GlobalChannelMap;
 import org.dovakin.push.core.event.EventType;
 import org.dovakin.push.demo.socket.bean.AuthAction;
@@ -16,27 +17,10 @@ import org.dovakin.push.core.pushserver.protocol.NGLSProtocol;
  */
 public class NGLSInBoundControl extends SimpleChannelInboundHandler<NGLSProtocol> {
 
-    protected void channelRead0(ChannelHandlerContext ctx, NGLSProtocol nglsProtocolCodec)
+    protected void channelRead0(ChannelHandlerContext ctx, NGLSProtocol nglsProtocol)
             throws Exception {
-        //TODO 协议数据处理
-        int action = nglsProtocolCodec.getTYPE();
-        switch (action){
-            case EventType.PUSH:
-                break;
-            case EventType.AUTH:
-                Gson gson = new Gson();
-                AuthAction authAction
-                        = gson.fromJson
-                        (new String(nglsProtocolCodec.getContent(), CharsetUtil.UTF_8),
-                                AuthAction.class);
-                GlobalChannelMap.put(authAction.getClientId(), ctx.channel());
-                System.out.println("NGLS通道建立[ClientID]: " + authAction.getClientId() + "\n");
-                byte[] result = "o".getBytes();
-                NGLSProtocol nglsProtocol = new NGLSProtocol(result.length, result);
-                nglsProtocol.setTYPE(EventType.AUTH_SUCCESS);
-                ctx.writeAndFlush(nglsProtocol);
-                break;
-        }
+        AnnotationDispatcher.dispatch(ctx, nglsProtocol.getContent(),
+                nglsProtocol.getTYPE());
     }
 
     @Override

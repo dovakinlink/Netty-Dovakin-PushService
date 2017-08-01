@@ -12,7 +12,8 @@ public class Startup {
 
     public static void main(String[] args){
 
-        AnnotationDispatcher.init("org.dovakin.httpserver.control.task");
+        AnnotationDispatcher.addHttpPackage("org.dovakin.push.demo.http.task");
+        AnnotationDispatcher.addNGLSPackage("org.dovakin.push.demo.socket.executable");
 
         ServerBinder.bind(new NGLSServer(), 9999);
         ServerBinder.bind(new HttpServer(), 8081);

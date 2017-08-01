@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.dovakin.push.core.httpserver.control.HttpTask;
 import org.dovakin.push.core.httpserver.executor.TaskExecutor;
+import org.dovakin.push.core.pushserver.Executable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +21,14 @@ public class AnnotationDispatcher {
     private static LinkedHashMap<String, Class<?>> httpTaskMap
             = new LinkedHashMap<String, Class<?>>();
 
+    private static LinkedHashMap<Integer, Class<?>> nglsMap
+            = new LinkedHashMap<Integer, Class<?>>();
+
     public static void init(String packageName){
+
+    }
+
+    public static void addHttpPackage(String packageName){
         Set<Class<?>> classes
                 = AnnotationScanner.find(RequestTask.class, packageName);
         Iterator<Class<?>> iterator = classes.iterator();
@@ -32,6 +40,45 @@ public class AnnotationDispatcher {
         }
     }
 
+    public static void addNGLSPackage(String packageName){
+        Set<Class<?>> classes
+                = AnnotationScanner.find(NGLSController.class, packageName);
+        Iterator<Class<?>> iterator = classes.iterator();
+        while (iterator.hasNext()){
+            Class<?> cls = iterator.next();
+            NGLSController nglsController = cls.getAnnotation(NGLSController.class);
+            int type = nglsController.type();
+            nglsMap.put(type,cls);
+        }
+    }
+
+    public static void dispatch(ChannelHandlerContext ctx, byte[] stream, int type){
+        Class targetClass = nglsMap.get(type);
+        if(targetClass == null){
+            //TODO 路由错误处理
+            return;
+        }
+        try {
+            Constructor constructor
+                    = targetClass.getDeclaredConstructor(
+                            new Class[]{ChannelHandlerContext.class, byte[].class}
+                     );
+            constructor.setAccessible(true);
+            Executable executable
+                    = (Executable) constructor.newInstance(ctx,stream);
+            executable.run();
+
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void dispatch(ChannelHandlerContext ctx, ByteBuf buf, String routeType){
         Class targetClass = httpTaskMap.get(routeType);
         if(targetClass == null){
@@ -39,25 +86,23 @@ public class AnnotationDispatcher {
             return;
         }
         try {
-            Constructor constructor;
-            try {
-                constructor
-                        = targetClass.getDeclaredConstructor(
+            Constructor constructor
+                    = targetClass.getDeclaredConstructor(
                                 new Class[]{ChannelHandlerContext.class, ByteBuf.class});
-                constructor.setAccessible(true);
-                HttpTask task
-                        = (HttpTask)constructor.newInstance(ctx, buf);
-                TaskExecutor.submit(task);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            constructor.setAccessible(true);
+            HttpTask task
+                    = (HttpTask)constructor.newInstance(ctx, buf);
+            TaskExecutor.submit(task);
 
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
+
 }
