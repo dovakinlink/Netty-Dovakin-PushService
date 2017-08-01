@@ -15,14 +15,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GlobalChannelMap {
 
-    private final static ConcurrentHashMap<String, ChannelId> channelMap
-            = new ConcurrentHashMap<String, ChannelId>();
+    private final static ConcurrentHashMap<String, ChannelInfo> channelMap
+            = new ConcurrentHashMap<String, ChannelInfo>();
     public final static ChannelGroup group
             = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     public static void put(String id, Channel channel){
         group.add(channel);
-        channelMap.put(id,channel.id());
+        ChannelInfo channelInfo = new ChannelInfo(channel.id());
+        channelMap.put(id,channelInfo);
     }
 
     public static void remove(String id){
@@ -41,12 +42,19 @@ public class GlobalChannelMap {
         group.remove(channelId);
     }
 
+    public static void close(ChannelId channelId){
+        Channel channel = group.find(channelId);
+        channel.close();
+        remove(channelId);
+    }
+
     public static void push(String id, NGLSProtocol msg){
-        ChannelId channelId = channelMap.get(id);
-        if(channelId == null){
+        ChannelInfo channelInfo = channelMap.get(id);
+        if(channelInfo == null){
             //TODO 推送对象不在线处理逻辑
             return;
         }
+        ChannelId channelId = channelInfo.channelId;
         Channel ch;
         if((ch = group.find(channelId)) != null){
             ch.writeAndFlush(msg);
@@ -55,5 +63,35 @@ public class GlobalChannelMap {
 
     public static void push(NGLSProtocol msg){
         group.writeAndFlush(msg);
+    }
+
+    private static class ChannelInfo{
+        private long timestamp;
+        private ChannelId channelId;
+
+        public ChannelInfo(ChannelId channelId){
+            this.channelId = channelId;
+            this.timestamp = System.currentTimeMillis();
+        }
+
+        public void hit(long time){
+            this.timestamp = time;
+        }
+
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(long timestamp) {
+            this.timestamp = timestamp;
+        }
+
+        public ChannelId getChannelId() {
+            return channelId;
+        }
+
+        public void setChannelId(ChannelId channelId) {
+            this.channelId = channelId;
+        }
     }
 }

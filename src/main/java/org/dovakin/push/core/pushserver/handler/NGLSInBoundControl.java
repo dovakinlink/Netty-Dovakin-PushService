@@ -2,6 +2,8 @@ package org.dovakin.push.core.pushserver.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import org.dovakin.push.core.annotations.AnnotationDispatcher;
 import org.dovakin.push.core.cache.GlobalChannelMap;
 import org.dovakin.push.core.pushserver.protocol.NGLSProtocol;
@@ -35,5 +37,17 @@ public class NGLSInBoundControl extends SimpleChannelInboundHandler<NGLSProtocol
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         System.out.println(cause.getMessage());
         ctx.close();
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if(evt instanceof IdleStateEvent){
+            IdleState state = ((IdleStateEvent) evt).state();
+            if (state == IdleState.READER_IDLE){
+                GlobalChannelMap.close(ctx.channel().id());
+            }
+        } else {
+            super.userEventTriggered(ctx, evt);
+        }
     }
 }

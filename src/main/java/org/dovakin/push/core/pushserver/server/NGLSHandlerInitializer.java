@@ -17,7 +17,7 @@ public class NGLSHandlerInitializer extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel channel) throws Exception {
         ChannelPipeline pipeline = channel.pipeline();
         // 心跳检测机制
-        pipeline.addLast(new IdleStateHandler(180,0,180, TimeUnit.SECONDS));
+        pipeline.addLast(new IdleStateHandler(120,0,0, TimeUnit.SECONDS));
         // NGLS协议编解码器
         pipeline.addLast(new NGLSProtocolCodec());
         // NGLS入栈控制器S
