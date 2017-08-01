@@ -7,6 +7,7 @@ import org.dovakin.push.core.httpserver.control.HttpTask;
 import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 /**
@@ -38,7 +39,9 @@ public class TaskExecutor {
                 task.onFailed(throwable.getMessage());
             }
         });
+    }
 
-        task.run();
+    public static ListeningExecutorService getExecutorService(){
+        return executorService;
     }
 }
