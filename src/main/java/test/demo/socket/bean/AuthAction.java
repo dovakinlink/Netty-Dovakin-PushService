@@ -1,4 +1,4 @@
-package org.dovakin.push.demo.socket.bean;
+package test.demo.socket.bean;
 
 /**
  * Created by liuhuanchao on 2017/7/25.

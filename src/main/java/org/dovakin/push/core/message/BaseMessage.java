@@ -1,6 +1,6 @@
 package org.dovakin.push.core.message;
 
-import org.dovakin.push.demo.http.bean.MessageType;
+import test.demo.http.bean.MessageType;
 
 /**
  * Created by liuhuanchao on 2017/7/24.

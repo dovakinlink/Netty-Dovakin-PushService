@@ -1,4 +1,4 @@
-package org.dovakin.push.demo.http.bean;
+package test.demo.http.bean;
 
 /**
  * Created by liuhuanchao on 2017/7/24.

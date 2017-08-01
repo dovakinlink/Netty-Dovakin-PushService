@@ -1,4 +1,4 @@
-package org.dovakin.push.demo.socket.executable;
+package test.demo.socket.executable;
 
 import com.google.gson.Gson;
 import io.netty.channel.ChannelHandlerContext;
@@ -8,7 +8,7 @@ import org.dovakin.push.core.cache.GlobalChannelMap;
 import org.dovakin.push.core.event.EventType;
 import org.dovakin.push.core.pushserver.AbstractExecutable;
 import org.dovakin.push.core.pushserver.protocol.NGLSProtocol;
-import org.dovakin.push.demo.socket.bean.AuthAction;
+import test.demo.socket.bean.AuthAction;
 
 /**
  * Created by liuhuanchao on 2017/8/1.

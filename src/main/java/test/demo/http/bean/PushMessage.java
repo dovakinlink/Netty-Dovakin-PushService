@@ -1,4 +1,4 @@
-package org.dovakin.push.demo.http.bean;
+package test.demo.http.bean;
 
 import org.dovakin.push.core.message.BaseMessage;
 

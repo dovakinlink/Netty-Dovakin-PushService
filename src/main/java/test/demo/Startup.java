@@ -1,4 +1,4 @@
-package org.dovakin;
+package test.demo;
 
 import org.dovakin.push.core.ServerBinder;
 import org.dovakin.push.core.annotations.AnnotationDispatcher;

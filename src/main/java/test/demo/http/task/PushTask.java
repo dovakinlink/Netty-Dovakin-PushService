@@ -1,4 +1,4 @@
-package org.dovakin.push.demo.http.task;
+package test.demo.http.task;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
@@ -10,8 +10,8 @@ import org.dovakin.push.core.cache.GlobalChannelMap;
 import org.dovakin.push.core.event.Event;
 import org.dovakin.push.core.event.EventType;
 import org.dovakin.push.core.httpserver.control.HttpTask;
-import org.dovakin.push.demo.http.bean.PushRequest;
-import org.dovakin.push.demo.http.bean.PushMessage;
+import test.demo.http.bean.PushRequest;
+import test.demo.http.bean.PushMessage;
 import org.dovakin.push.core.pushserver.protocol.NGLSProtocol;
 
 /**

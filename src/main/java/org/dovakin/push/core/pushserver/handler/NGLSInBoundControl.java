@@ -1,13 +1,9 @@
 package org.dovakin.push.core.pushserver.handler;
 
-import com.google.gson.Gson;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.CharsetUtil;
 import org.dovakin.push.core.annotations.AnnotationDispatcher;
 import org.dovakin.push.core.cache.GlobalChannelMap;
-import org.dovakin.push.core.event.EventType;
-import org.dovakin.push.demo.socket.bean.AuthAction;
 import org.dovakin.push.core.pushserver.protocol.NGLSProtocol;
 
 /**
