@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
 import org.dovakin.push.core.annotations.NGLSController;
 import org.dovakin.push.core.cache.GlobalChannelMap;
-import org.dovakin.push.core.event.EventType;
+import test.demo.EventType;
 import org.dovakin.push.core.pushserver.AbstractExecutable;
 import org.dovakin.push.core.pushserver.protocol.NGLSProtocol;
 import test.demo.socket.bean.AuthAction;

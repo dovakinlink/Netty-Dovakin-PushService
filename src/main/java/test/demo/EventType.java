@@ -1,4 +1,4 @@
-package org.dovakin.push.core.event;
+package test.demo;
 
 /**
  * Created by liuhuanchao on 2017/7/25.

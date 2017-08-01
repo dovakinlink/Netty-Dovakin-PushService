@@ -8,7 +8,7 @@ import io.netty.util.CharsetUtil;
 import org.dovakin.push.core.annotations.RequestTask;
 import org.dovakin.push.core.cache.GlobalChannelMap;
 import org.dovakin.push.core.event.Event;
-import org.dovakin.push.core.event.EventType;
+import test.demo.EventType;
 import org.dovakin.push.core.httpserver.control.HttpTask;
 import test.demo.http.bean.PushRequest;
 import test.demo.http.bean.PushMessage;
