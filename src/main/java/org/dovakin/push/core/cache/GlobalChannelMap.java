@@ -38,7 +38,6 @@ public class GlobalChannelMap {
                 channelMap.remove(key);
             }
         }
-        //TODO 不了解是否为正确用法
         group.remove(channelId);
     }
 
