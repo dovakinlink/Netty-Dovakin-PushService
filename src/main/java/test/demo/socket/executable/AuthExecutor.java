@@ -1,8 +1,6 @@
 package test.demo.socket.executable;
 
-import com.google.gson.Gson;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.CharsetUtil;
 import org.dovakin.push.core.annotations.NGLSController;
 import org.dovakin.push.core.cache.GlobalChannelMap;
 import test.demo.EventType;
@@ -19,13 +17,10 @@ public class AuthExecutor extends AbstractExecutable<AuthAction> {
     private ChannelHandlerContext mContext;
     private AuthAction authAction;
 
-    public AuthExecutor(ChannelHandlerContext ctx, byte[] stream) {
-        super(ctx,stream);
+    public AuthExecutor(ChannelHandlerContext ctx, AuthAction authAction) {
+        super(ctx,authAction);
         mContext = ctx;
-    }
-
-    public void handleData(AuthAction protocol) {
-        authAction = protocol;
+        this.authAction = authAction;
     }
 
     public void run() {

@@ -12,16 +12,15 @@ import java.lang.reflect.Type;
  */
 public abstract class AbstractExecutable<T> implements Executable {
 
-    private byte[] data;
+    private T data;
     private Class<T> entityClass;
 
-    public AbstractExecutable(ChannelHandlerContext ctx, byte[] stream){
-        this.data = stream;
+    public AbstractExecutable(ChannelHandlerContext ctx, T protocol){
+        this.data = protocol;
 
-        handleData(decodeProtocol());
     }
 
-    private T decodeProtocol(){
+/*    private T decodeProtocol(){
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
         entityClass = (Class)params[0];
@@ -29,7 +28,6 @@ public abstract class AbstractExecutable<T> implements Executable {
         String protocolStr = new String(this.data, CharsetUtil.UTF_8);
         T entity = new Gson().fromJson(protocolStr, entityClass);
         return entity;
-    }
+    }*/
 
-    public abstract void handleData(T protocol);
 }
