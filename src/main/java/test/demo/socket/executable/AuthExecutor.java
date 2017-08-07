@@ -14,23 +14,26 @@ import test.demo.socket.bean.AuthAction;
  * Created by liuhuanchao on 2017/8/1.
  */
 @NGLSController(type = EventType.AUTH)
-public class AuthExecutor extends AbstractExecutable {
+public class AuthExecutor extends AbstractExecutable<AuthAction> {
+
+    private ChannelHandlerContext mContext;
+    private AuthAction authAction;
 
     public AuthExecutor(ChannelHandlerContext ctx, byte[] stream) {
         super(ctx,stream);
+        mContext = ctx;
+    }
+
+    public void handleData(AuthAction protocol) {
+        authAction = protocol;
     }
 
     public void run() {
-        Gson gson = new Gson();
-        AuthAction authAction
-                = gson.fromJson
-                (new String(data(), CharsetUtil.UTF_8),
-                        AuthAction.class);
-        GlobalChannelMap.put(authAction.getClientId(), channelHandlerContext().channel());
+        GlobalChannelMap.put(authAction.getClientId(), mContext.channel());
         System.out.println("NGLS通道建立[ClientID]: " + authAction.getClientId() + "\n");
         byte[] result = "o".getBytes();
         NGLSProtocol nglsProtocol = new NGLSProtocol(result.length, result);
         nglsProtocol.setTYPE(EventType.AUTH_SUCCESS);
-        channelHandlerContext().writeAndFlush(nglsProtocol);
+        mContext.writeAndFlush(nglsProtocol);
     }
 }

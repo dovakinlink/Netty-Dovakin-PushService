@@ -1,21 +1,35 @@
 package org.dovakin.push.core.pushserver;
 
+import com.google.gson.Gson;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.CharsetUtil;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * Created by liuhuanchao on 2017/8/1.
  */
-public abstract class AbstractExecutable implements Executable {
+public abstract class AbstractExecutable<T> implements Executable {
 
     private byte[] data;
-    private ChannelHandlerContext mContext;
+    private Class<T> entityClass;
 
     public AbstractExecutable(ChannelHandlerContext ctx, byte[] stream){
         this.data = stream;
-        this.mContext = ctx;
+
+        handleData(decodeProtocol());
     }
 
-    protected byte[] data(){return this.data;}
+    private T decodeProtocol(){
+        Type genType = getClass().getGenericSuperclass();
+        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+        entityClass = (Class)params[0];
 
-    protected ChannelHandlerContext channelHandlerContext(){return this.mContext;}
+        String protocolStr = new String(this.data, CharsetUtil.UTF_8);
+        T entity = new Gson().fromJson(protocolStr, entityClass);
+        return entity;
+    }
+
+    public abstract void handleData(T protocol);
 }
