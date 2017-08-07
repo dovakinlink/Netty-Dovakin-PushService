@@ -1,4 +1,4 @@
-package org.dovakin.push.core.message;
+package test.demo.message;
 
 
 /**

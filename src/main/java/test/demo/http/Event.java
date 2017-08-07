@@ -1,6 +1,7 @@
-package org.dovakin.push.core.event;
+package test.demo.http;
 
-import org.dovakin.push.core.message.BaseMessage;
+
+import test.demo.message.BaseMessage;
 
 /**
  * Created by liuhuanchao on 2017/7/25.

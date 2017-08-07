@@ -7,20 +7,20 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
-import org.dovakin.push.core.event.Event;
 
 /**
  * Created by liuhuanchao on 2017/7/24.
  */
-public abstract class HttpTask {
+public abstract class HttpTask<T> {
 
     private final ChannelHandlerContext ctx;
 
-    private final Event event;
+    private final T protocol;
 
     public HttpTask(ChannelHandlerContext ctx, ByteBuf buf){
         this.ctx = ctx;
-        this.event = getEvent(buf);
+        String content = buf.toString(CharsetUtil.UTF_8);
+        this.protocol = decodeProtocol(content);
 
     }
 
@@ -28,13 +28,13 @@ public abstract class HttpTask {
        return onInvoke();
     }
 
-    public Event getEvent(){
-        return this.event;
+    public T getProtocol(){
+        return this.protocol;
     }
 
     public void onSuccess(String msg){
 
-        String responseContent = onFinish(ctx, event.getContent().getClientId(), msg);
+        String responseContent = onFinish(ctx, protocol, msg);
         ChannelFuture future
                 = ctx.writeAndFlush(
                         makeResponse(HttpResponseStatus.OK,responseContent));
@@ -42,7 +42,7 @@ public abstract class HttpTask {
     }
 
     public void onFailed(String msg){
-        String responseContent = onFinish(ctx, event.getContent().getClientId(), msg);
+        String responseContent = onFinish(ctx, protocol, msg);
         ChannelFuture future
                 = ctx.writeAndFlush(
                         makeResponse(HttpResponseStatus.OK,responseContent));
@@ -50,8 +50,8 @@ public abstract class HttpTask {
     }
 
     protected abstract String onInvoke();
-    protected abstract String onFinish(ChannelHandlerContext ctx, String clientId, String obj);
-    protected abstract Event getEvent(ByteBuf buf);
+    protected abstract String onFinish(ChannelHandlerContext ctx, T event, String obj);
+    protected abstract T decodeProtocol(String content);
 
     /**
      * 构造HTTP RESPONSE

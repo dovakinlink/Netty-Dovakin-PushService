@@ -1,3 +1,4 @@
 {
+    "httptask_package":"test.demo.http.task",
     "ngls_package":"test.demo.socket.executable"
 }

@@ -1,7 +1,8 @@
 package test.demo.http.bean;
 
-import org.dovakin.push.core.message.BaseMessage;
-import org.dovakin.push.core.message.MessageType;
+
+import test.demo.message.BaseMessage;
+import test.demo.message.MessageType;
 
 /**
  * Created by liuhuanchao on 2017/7/24.

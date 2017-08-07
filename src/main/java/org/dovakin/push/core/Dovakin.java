@@ -23,7 +23,6 @@ public class Dovakin {
         config_path = CONFIG_DEFAULT_PATH;
         try {
             initAnno();
-            initJDBC();
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -33,7 +32,6 @@ public class Dovakin {
         config_path = path;
         try {
             initAnno();
-            initJDBC();
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -55,10 +53,6 @@ public class Dovakin {
         } catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-    private static void initJDBC() throws ClassNotFoundException {
-        Class.forName("com.mysql.jdbc.Driver");
     }
 
     private static DovakinConfig readConfig(){
